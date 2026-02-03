@@ -1,0 +1,36 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    ports:
+      - "8080:8080"           # host:container
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: mysql:8.0
+    container_name: laravel-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root     # root password
+      MYSQL_DATABASE: laravel       # database for Laravel
+      MYSQL_USER: laravel           # regular Laravel user
+      MYSQL_PASSWORD: laravel       # password for Laravel user
+    ports:
+      - "3307:3306"                 # host port avoids conflicts
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  redis:
+    image: redis:7.0
+    container_name: laravel-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  dbdata:
